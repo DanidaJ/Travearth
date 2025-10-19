@@ -12,8 +12,6 @@ const nextConfig = {
   },
   // Enable React strict mode for better performance
   reactStrictMode: true,
-  // Optimize production builds
-  swcMinify: true,
   // Prefetch pages on hover
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
