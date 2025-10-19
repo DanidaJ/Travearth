@@ -1,0 +1,290 @@
+# ========================
+# Travearth Project
+# Full-Stack .gitignore
+# ========================
+
+# ============================================
+# GENERAL
+# ============================================
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE & Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ============================================
+# CLIENT (Next.js / React)
+# ============================================
+
+# Dependencies
+client/node_modules/
+client/.pnp
+client/.pnp.js
+
+# Testing
+client/coverage/
+client/.nyc_output
+
+# Next.js Build Output
+client/.next/
+client/out/
+client/build/
+client/dist/
+
+# Production
+client/build
+
+# Misc
+client/.DS_Store
+client/*.pem
+
+# Debug
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+
+# Local env files
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+
+# Vercel
+client/.vercel
+
+# Typescript
+client/*.tsbuildinfo
+client/next-env.d.ts
+
+# ============================================
+# SERVER (Node.js / Express)
+# ============================================
+
+# Dependencies
+server/node_modules/
+
+# Testing
+server/coverage/
+server/.nyc_output
+
+# Production
+server/build/
+server/dist/
+
+# Environment Variables
+server/.env
+server/.env.local
+server/.env.development
+server/.env.test
+server/.env.production
+
+# Logs
+server/logs/
+server/*.log
+server/npm-debug.log*
+server/yarn-debug.log*
+server/yarn-error.log*
+
+# ============================================
+# DATABASE
+# ============================================
+
+# MongoDB
+*.mongodb
+*.db
+
+# Database dumps
+*.dump
+*.sql
+*.sqlite
+*.sqlite3
+
+# ============================================
+# ENVIRONMENT & CONFIG
+# ============================================
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# Config files (if they contain secrets)
+config.json
+secrets.json
+
+# ============================================
+# BUILD & DEPENDENCIES
+# ============================================
+
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+
+# TypeScript
+*.tsbuildinfo
+*.d.ts.map
+
+# ============================================
+# PACKAGE MANAGERS
+# ============================================
+
+# npm
+package-lock.json
+npm-debug.log*
+.npm
+
+# Yarn
+yarn.lock
+yarn-debug.log*
+yarn-error.log*
+.yarn/
+.pnp.*
+
+# pnpm
+pnpm-lock.yaml
+.pnpm-debug.log*
+
+# ============================================
+# TESTING
+# ============================================
+
+# Test coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# Test results
+test-results/
+junit.xml
+
+# ============================================
+# TEMPORARY FILES
+# ============================================
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+tmp/
+temp/
+
+# Cache
+.cache/
+*.cache
+
+# ============================================
+# SECURITY
+# ============================================
+
+# Keys & Certificates
+*.key
+*.pem
+*.cert
+*.crt
+*.p12
+*.pfx
+
+# Secrets
+secrets/
+*.secrets
+
+# ============================================
+# DOCUMENTATION (Optional)
+# ============================================
+
+# Uncomment if you don't want to track certain docs
+# *.md
+# docs/
+
+# ============================================
+# GENERATED FILES
+# ============================================
+
+# Generated static files
+public/generated/
+static/generated/
+
+# Uploaded files (if any)
+uploads/
+user-uploads/
+
+# ============================================
+# DEPLOYMENT
+# ============================================
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Cloud deployment
+.vercel/
+.netlify/
+.firebase/
+
+# ============================================
+# MISC
+# ============================================
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Large files (optional - uncomment if needed)
+# *.mp4
+# *.mov
+# *.avi
+# *.mkv
+# *.pdf
+
+# Project-specific (add as needed)
+.vscode-test/
+*.code-workspace

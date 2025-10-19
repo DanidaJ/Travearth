@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amadeus API Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        h1 {
+            color: #22c55e;
+        }
+        .test-section {
+            background: #1a1a1a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        button {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #16a34a;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 20px;
+            background: #111;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .flight-card {
+            background: #1a1a1a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #444;
+        }
+        .price {
+            color: #22c55e;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .carbon {
+            color: #fb923c;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            padding: 10px;
+            background: #3f1111;
+            border-radius: 4px;
+            border: 1px solid #ef4444;
+        }
+        .success {
+            color: #22c55e;
+            padding: 10px;
+            background: #0f2f1f;
+            border-radius: 4px;
+            border: 1px solid #22c55e;
+        }
+        .loading {
+            color: #3b82f6;
+        }
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        input, select {
+            background: #111;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>✈️ Amadeus Flight API Test</h1>
+    <p>Testing real-time flight data integration</p>
+
+    <!-- Test 1: Search Flights -->
+    <div class="test-section">
+        <h2>🔍 Test 1: Search Flights</h2>
+        <div class="input-group">
+            <label>Origin:</label>
+            <input type="text" id="origin" value="CMB" placeholder="Airport code">
+        </div>
+        <div class="input-group">
+            <label>Destination:</label>
+            <input type="text" id="destination" value="BKK" placeholder="Airport code">
+        </div>
+        <div class="input-group">
+            <label>Date:</label>
+            <input type="date" id="date" value="2025-11-15">
+        </div>
+        <div class="input-group">
+            <label>Passengers:</label>
+            <input type="number" id="adults" value="1" min="1" max="9">
+        </div>
+        <div class="input-group">
+            <label>Class:</label>
+            <select id="class">
+                <option value="ECONOMY">Economy</option>
+                <option value="BUSINESS">Business</option>
+            </select>
+        </div>
+        <button onclick="searchFlights()">Search Flights</button>
+        <button onclick="clearResults('flights-result')">Clear</button>
+        <div id="flights-result" class="results"></div>
+    </div>
+
+    <!-- Test 2: Search Airports -->
+    <div class="test-section">
+        <h2>🏢 Test 2: Search Airports</h2>
+        <div class="input-group">
+            <label>City/Airport:</label>
+            <input type="text" id="airport-keyword" value="Bangkok" placeholder="Enter city or airport name">
+        </div>
+        <button onclick="searchAirports()">Search Airports</button>
+        <button onclick="clearResults('airports-result')">Clear</button>
+        <div id="airports-result" class="results"></div>
+    </div>
+
+    <!-- Test 3: Multi-City Search -->
+    <div class="test-section">
+        <h2>🌍 Test 3: Multi-City Trip</h2>
+        <p>Route: CMB → BKK → SIN → CMB</p>
+        <button onclick="searchMultiCity()">Search Multi-City</button>
+        <button onclick="clearResults('multicity-result')">Clear</button>
+        <div id="multicity-result" class="results"></div>
+    </div>
+
+    <!-- Test 4: Airline Info -->
+    <div class="test-section">
+        <h2>✈️ Test 4: Airline Information</h2>
+        <div class="input-group">
+            <label>Airline Code:</label>
+            <input type="text" id="airline-code" value="TG" placeholder="2-letter code">
+        </div>
+        <button onclick="getAirlineInfo()">Get Airline Info</button>
+        <button onclick="clearResults('airline-result')">Clear</button>
+        <div id="airline-result" class="results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/flights';
+
+        function clearResults(id) {
+            document.getElementById(id).innerHTML = '';
+        }
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<p class="loading">⏳ Loading...</p>';
+        }
+
+        function showError(elementId, error) {
+            document.getElementById(elementId).innerHTML = `<div class="error">❌ Error: ${error}</div>`;
+        }
+
+        function showSuccess(elementId, message) {
+            document.getElementById(elementId).innerHTML = `<div class="success">✅ ${message}</div>`;
+        }
+
+        async function searchFlights() {
+            const resultDiv = 'flights-result';
+            showLoading(resultDiv);
+
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            const date = document.getElementById('date').value;
+            const adults = parseInt(document.getElementById('adults').value);
+            const travelClass = document.getElementById('class').value;
+
+            try {
+                const response = await fetch(`${API_URL}/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin,
+                        destination,
+                        departureDate: date,
+                        adults,
+                        travelClass
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.length > 0) {
+                    let html = `<div class="success">✅ Found ${data.data.length} flight offers!</div>`;
+                    
+                    data.data.forEach((offer, index) => {
+                        html += `
+                            <div class="flight-card">
+                                <h3>Flight ${index + 1}</h3>
+                                <div class="price">$${offer.price.total} ${offer.price.currency}</div>
+                                <p>
+                                    <strong>Airline:</strong> ${offer.airline} ${offer.flight.number}<br>
+                                    <strong>Route:</strong> ${offer.flight.departure.airport} → ${offer.flight.arrival.airport}<br>
+                                    <strong>Departure:</strong> ${new Date(offer.flight.departure.time).toLocaleString()}<br>
+                                    <strong>Arrival:</strong> ${new Date(offer.flight.arrival.time).toLocaleString()}<br>
+                                    <strong>Duration:</strong> ${offer.flight.duration}<br>
+                                    <strong>Cabin:</strong> ${offer.flight.cabin}<br>
+                                    <strong>Stops:</strong> ${offer.numberOfStops === 0 ? 'Direct' : offer.numberOfStops}<br>
+                                    <span class="carbon">🌍 Carbon: ${offer.carbon.weight || 'N/A'} ${offer.carbon.unit}</span>
+                                </p>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById(resultDiv).innerHTML = html;
+                } else {
+                    showError(resultDiv, data.error || 'No flights found');
+                }
+            } catch (error) {
+                showError(resultDiv, error.message);
+            }
+        }
+
+        async function searchAirports() {
+            const resultDiv = 'airports-result';
+            showLoading(resultDiv);
+
+            const keyword = document.getElementById('airport-keyword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/airports?keyword=${encodeURIComponent(keyword)}`);
+                const data = await response.json();
+
+                if (data.success && data.data.length > 0) {
+                    let html = `<div class="success">✅ Found ${data.data.length} airports!</div>`;
+                    
+                    data.data.forEach(airport => {
+                        html += `
+                            <div class="flight-card">
+                                <h3>${airport.name} (${airport.code})</h3>
+                                <p>
+                                    <strong>City:</strong> ${airport.city}<br>
+                                    <strong>Country:</strong> ${airport.country}<br>
+                                    <strong>Coordinates:</strong> ${airport.coordinates.lat}, ${airport.coordinates.lng}
+                                </p>
+                            </div>
+                        `;
+                    });
+                    
+                    document.getElementById(resultDiv).innerHTML = html;
+                } else {
+                    showError(resultDiv, 'No airports found');
+                }
+            } catch (error) {
+                showError(resultDiv, error.message);
+            }
+        }
+
+        async function searchMultiCity() {
+            const resultDiv = 'multicity-result';
+            showLoading(resultDiv);
+
+            const routes = [
+                { origin: 'CMB', destination: 'BKK', date: '2025-11-15' },
+                { origin: 'BKK', destination: 'SIN', date: '2025-11-20' },
+                { origin: 'SIN', destination: 'CMB', date: '2025-11-25' }
+            ];
+
+            try {
+                const response = await fetch(`${API_URL}/multi-city`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        routes,
+                        adults: 1,
+                        travelClass: 'ECONOMY'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.length > 0) {
+                    let html = `<div class="success">✅ Found flights for ${data.data.length} routes!</div>`;
+                    
+                    data.data.forEach(routeResult => {
+                        html += `<h3>Route: ${routeResult.route.from} → ${routeResult.route.to}</h3>`;
+                        
+                        if (routeResult.offers.length > 0) {
+                            routeResult.offers.slice(0, 2).forEach((offer, index) => {
+                                html += `
+                                    <div class="flight-card">
+                                        <strong>Option ${index + 1}</strong><br>
+                                        <div class="price">$${offer.price.total} ${offer.price.currency}</div>
+                                        <p>
+                                            ${offer.airline} ${offer.flight.number} | 
+                                            ${offer.flight.cabin} | 
+                                            <span class="carbon">${offer.carbon.weight || 'N/A'} ${offer.carbon.unit} CO₂</span>
+                                        </p>
+                                    </div>
+                                `;
+                            });
+                        }
+                    });
+                    
+                    document.getElementById(resultDiv).innerHTML = html;
+                } else {
+                    showError(resultDiv, 'No multi-city results found');
+                }
+            } catch (error) {
+                showError(resultDiv, error.message);
+            }
+        }
+
+        async function getAirlineInfo() {
+            const resultDiv = 'airline-result';
+            showLoading(resultDiv);
+
+            const code = document.getElementById('airline-code').value;
+
+            try {
+                const response = await fetch(`${API_URL}/airline/${code}`);
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const airline = data.data;
+                    const html = `
+                        <div class="success">✅ Airline information found!</div>
+                        <div class="flight-card">
+                            <h3>${airline.businessName || airline.commonName}</h3>
+                            <p>
+                                <strong>IATA Code:</strong> ${airline.iataCode}<br>
+                                <strong>ICAO Code:</strong> ${airline.icaoCode || 'N/A'}<br>
+                                <strong>Type:</strong> ${airline.type || 'N/A'}
+                            </p>
+                            <pre>${JSON.stringify(airline, null, 2)}</pre>
+                        </div>
+                    `;
+                    document.getElementById(resultDiv).innerHTML = html;
+                } else {
+                    showError(resultDiv, 'Airline not found');
+                }
+            } catch (error) {
+                showError(resultDiv, error.message);
+            }
+        }
+
+        // Set default date to 1 month from now
+        const futureDate = new Date();
+        futureDate.setMonth(futureDate.getMonth() + 1);
+        document.getElementById('date').value = futureDate.toISOString().split('T')[0];
+    </script>
+</body>
+</html>
